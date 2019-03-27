@@ -1,6 +1,6 @@
 {
   "name": "ins-array-list",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "array list normal operation by object-orientaion",
   "main": "index.js",
   "scripts": {
