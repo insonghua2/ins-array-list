@@ -1,0 +1,19 @@
+{
+  "name": "ins-array-list",
+  "version": "1.0.0",
+  "description": "array list normal operation by object-orientaion",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "keywords": [
+    "array",
+    "list"
+  ],
+  "author": "insonghua2",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.0.2"
+  }
+}
