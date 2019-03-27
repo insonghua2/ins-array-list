@@ -6,12 +6,20 @@
   "scripts": {
     "test": "mocha test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/insonghua2/ins-array-list.git"
+  },
   "keywords": [
     "array",
     "list"
   ],
-  "author": "insonghua2",
-  "license": "ISC",
+  "author": {
+    "email": "huaps86@126.com",
+    "name": "insonghua2",
+    "url": "https://github.com/insonghua2"
+  },
+  "license": "MIT",
   "devDependencies": {
     "chai": "^4.2.0",
     "mocha": "^6.0.2"
