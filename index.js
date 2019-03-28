@@ -1,17 +1,17 @@
-// methods override 
-function addMethod(obj, fnName, fn) {
-  var old = obj[fnName];
-  obj[fnName] = function() {
+// methods override
+function addMethod (obj, fnName, fn) {
+  var old = obj[fnName]
+  obj[fnName] = function () {
     if (arguments.length === fn.length) {
-      return fn.apply(this, arguments);
-    } else if (typeof old === "function") {
-      return old.apply(this, arguments);
+      return fn.apply(this, arguments)
+    } else if (typeof old === 'function') {
+      return old.apply(this, arguments)
     }
-  };
+  }
 }
 
 // private methods
-const _outOfBound = Symbol("_outOfBound");
+const _outOfBound = Symbol('_outOfBound')
 
 class ArrayList {
   /**
@@ -20,59 +20,57 @@ class ArrayList {
    * @param {string} uniqueKey
    * @memberof ArrayList
    */
-  constructor(listData, uniqueKey) {
-    this.listData = [...listData] || [];
-    this.uniqueKey = uniqueKey || "id";
-    
-    addMethod(this, "add", function(item) {
-      if(this.isDeplicated(item)){
+  constructor (listData, uniqueKey) {
+    this.listData = [...listData] || []
+    this.uniqueKey = uniqueKey || 'id'
+
+    addMethod(this, 'add', function (item) {
+      if (this.isDeplicated(item)) {
         return false
       }
-      this.listData.push(item);
+      this.listData.push(item)
       return true
-    });
-    addMethod(this, "add", function(index, item) {
-      if(this.isDeplicated(item)){
+    })
+    addMethod(this, 'add', function (index, item) {
+      if (this.isDeplicated(item)) {
         return false
       }
       if (this[_outOfBound](index)) {
         // return false;
         throw new Error(`index is out of bound`)
       }
-      this.listData.splice(index, 0, item);
+      this.listData.splice(index, 0, item)
       return true
-    });
-    addMethod(this, "addAll", function(items) {
-      const isDeplicated=items.find((item)=>{
-        if(this.isDeplicated(item)){
+    })
+    addMethod(this, 'addAll', function (items) {
+      const isDeplicated = items.find((item) => {
+        if (this.isDeplicated(item)) {
           return true
         }
       })
-      if(!!isDeplicated){
+      if (isDeplicated) {
         throw new Error('should not contains deplicated item')
       }
-      
-      this.listData=this.listData.concat(items);
+
+      this.listData = this.listData.concat(items)
       return true
-    });
-    addMethod(this, "addAll", function(index, items) {
-      const isDeplicated=items.find((item)=>{
-        if(this.isDeplicated(item)){
+    })
+    addMethod(this, 'addAll', function (index, items) {
+      const isDeplicated = items.find((item) => {
+        if (this.isDeplicated(item)) {
           return true
         }
       })
-      if(!!isDeplicated){
+      if (isDeplicated) {
         throw new Error('should not contains deplicated item')
       }
       if (this[_outOfBound](index)) {
-        return false;
+        return false
       }
-      Array.prototype.splice.apply(this.listData, [index, 0, ...items]);
+      Array.prototype.splice.apply(this.listData, [index, 0, ...items])
       return true
-
-    });
+    })
   }
-
 
   /**
    *
@@ -81,47 +79,43 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  [_outOfBound](index) {
-    return index < 0 || index > this.size() - 1;
+  [_outOfBound] (index) {
+    return index < 0 || index > this.size() - 1
   }
 
-
-  isDeplicated(obj){
-    const key=this.uniqueKey
-    const found=this.listData.find((item)=>item[key]===obj[key])
+  isDeplicated (obj) {
+    const key = this.uniqueKey
+    const found = this.listData.find((item) => item[key] === obj[key])
     return !!found
   }
-
 
   /**
    *
    *
    * @memberof ArrayList
    */
-  clear() {
-    this.listData = [];
+  clear () {
+    this.listData = []
   }
-
-  
 
   /**
    *
    *
    * @param {(Object|number)} arg
-   * @returns {Boolean} 
+   * @returns {Boolean}
    * @memberof ArrayList
    */
-  remove(arg) {
-    const type = typeof arg;
-    if(type==='object'&&!this.isDeplicated(arg)){
+  remove (arg) {
+    const type = typeof arg
+    if (type === 'object' && !this.isDeplicated(arg)) {
       return false
     }
-    const index = type === "number" ? arg : this.indexOf(arg);
+    const index = type === 'number' ? arg : this.indexOf(arg)
     if (this[_outOfBound](index)) {
       throw new Error(`index is out of bound`)
     }
-    this.listData.splice(arg, 1);
-    return true;
+    this.listData.splice(arg, 1)
+    return true
   }
 
   /**
@@ -131,26 +125,24 @@ class ArrayList {
    * @returns {Boolean} result
    * @memberof ArrayList
    */
-  removeAll(list) {
+  removeAll (list) {
     if (!list.length) {
-      return false;
+      return false
     }
-    const isUnExist=list.find((item)=>{
-      if(!this.isDeplicated(item)){
+    const isUnExist = list.find((item) => {
+      if (!this.isDeplicated(item)) {
         return true
       }
     })
-    if(!!isUnExist){
+    if (isUnExist) {
       throw new Error('should not contains unexisted item')
     }
 
     for (let i = 0; i < list.length; i++) {
-      this.remove(list[i]);
+      this.remove(list[i])
     }
-    return true;
+    return true
   }
-
-
 
   /**
    *
@@ -160,16 +152,15 @@ class ArrayList {
    * @param {predicatorCb} predicator
    * @memberof ArrayList
    */
-  removeIf(predicator) {
-    if (typeof predicator === "function") {
+  removeIf (predicator) {
+    if (typeof predicator === 'function') {
       this.listData = this.listData.filter((item, i) => {
-        return !predicator(item, i);
-      });
+        return !predicator(item, i)
+      })
     } else {
-      throw new Error("predicator must be a function");
+      throw new Error('predicator must be a function')
     }
   }
-
 
   /**
    *
@@ -179,19 +170,18 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  subList(formIndex, toEndIndex) {
-    if(this[_outOfBound](formIndex)){
+  subList (formIndex, toEndIndex) {
+    if (this[_outOfBound](formIndex)) {
       throw new Error('index is out of bound')
     }
-    if(this[_outOfBound](toEndIndex)){
+    if (this[_outOfBound](toEndIndex)) {
       throw new Error('index is out of bound')
     }
     if (formIndex > toEndIndex) {
-      throw new Error("formIndex should not larger than toEndIndex ");
+      throw new Error('formIndex should not larger than toEndIndex ')
     }
-    return this.listData.slice(formIndex, toEndIndex + 1);
+    return this.listData.slice(formIndex, toEndIndex + 1)
   }
-
 
   /**
    *
@@ -199,15 +189,14 @@ class ArrayList {
    * @param {Function} iterator
    * @memberof ArrayList
    */
-  iterate(iterator) {
-    if (typeof iterator !== "function") {
-      throw new Error("predicator must be a function");
+  iterate (iterator) {
+    if (typeof iterator !== 'function') {
+      throw new Error('predicator must be a function')
     }
     for (let i = 0; i < this.size(); i++) {
-      iterator(this.get(i), i);
+      iterator(this.get(i), i)
     }
   }
-
 
   /**
    *
@@ -215,9 +204,9 @@ class ArrayList {
    * @param {Function} predicator
    * @memberof ArrayList
    */
-  sort(predicator) {
-    if (typeof predicator === "function") {
-      this.listData.sort(predicator);
+  sort (predicator) {
+    if (typeof predicator === 'function') {
+      this.listData.sort(predicator)
     }
   }
 
@@ -226,10 +215,9 @@ class ArrayList {
    *
    * @memberof ArrayList
    */
-  shuffle() {
-    this.listData.sort((a, b) => Math.random() - 0.5);
+  shuffle () {
+    this.listData.sort((a, b) => Math.random() - 0.5)
   }
-
 
   /**
    *
@@ -238,17 +226,16 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  contains(item) {
+  contains (item) {
     if (!this.listData.length) {
-      return false;
+      return false
     }
-    const key = this.uniqueKey;
+    const key = this.uniqueKey
     const isFound = this.listData.find(data => {
-      return data[key] == item[key];
-    });
-    return !!isFound;
+      return data[key] === item[key]
+    })
+    return !!isFound
   }
-
 
   /**
    *
@@ -257,23 +244,12 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  indexOf(obj) {
-    const key = this.uniqueKey;
+  indexOf (obj) {
+    const key = this.uniqueKey
     const index = this.listData.findIndex((item, i) => {
-      return item[key] === obj[key];
-    });
-    return index;
-  }
-
-
-  /**
-   *
-   *
-   * @returns
-   * @memberof ArrayList
-   */
-  size() {
-    return this.listData.length;
+      return item[key] === obj[key]
+    })
+    return index
   }
 
   /**
@@ -282,8 +258,18 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  isEmpty() {
-    return this.size() === 0;
+  size () {
+    return this.listData.length
+  }
+
+  /**
+   *
+   *
+   * @returns
+   * @memberof ArrayList
+   */
+  isEmpty () {
+    return this.size() === 0
   }
 
   /**
@@ -293,11 +279,11 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  get(index) {
+  get (index) {
     if (this[_outOfBound](index)) {
-      return null;
+      return null
     }
-    return this.listData[index];
+    return this.listData[index]
   }
 
   /**
@@ -308,11 +294,11 @@ class ArrayList {
    * @returns
    * @memberof ArrayList
    */
-  set(index, item) {
+  set (index, item) {
     if (this[_outOfBound](index)) {
       throw new Error('index is out of bound')
     }
-    this.listData[index] = item;
+    this.listData[index] = item
   }
 
   /**
@@ -320,10 +306,10 @@ class ArrayList {
    * @returns {ObjectArray}
    * @memberof ArrayList
    */
-  get source() {
-    return this.listData;
+  get source () {
+    return this.listData
   }
-  set source(listData) {}
+  set source (listData) {}
 }
 
-module.exports = ArrayList;
+module.exports = ArrayList

@@ -1,3 +1,8 @@
+![npm](https://img.shields.io/npm/v/ins-array-list.svg?style=flat-square)
+![Travis (.org)](https://img.shields.io/travis/insonghua2/ins-array-list.svg?style=flat-square)
+![Coveralls github](https://img.shields.io/coveralls/github/insonghua2/ins-array-list.svg?style=flat-square)
+![npm](https://img.shields.io/npm/dt/ins-array-list.svg?style=flat-square)
+
 >   simple array list implementation in javascript like java 
 
 
@@ -48,32 +53,41 @@ console.log(mList.source)
 
 #### .add(item)
 Type:Object item
+
 It adds item to the end of the array list
 
 #### .add(index,item)
 Type:Number index
+
 Type:Object item
+
 It inserts item to the index of the array list
 
 
 #### .addAll(items)
 Type:Object items
+
 It adds all items to the array list
 
 #### .addAll(index,items)
 Type:Number index
+
 Type:Object items
+
 It inserts items to the index of the array list
 
 #### .remove(index)
 Type:Number index
+
 It removes the item at index of the array list.
 
 #### .remove(item)
 Type:Object item
+
 It removes the item in the array list.
 
-#### .removeAll(sublist) 
+#### .removeAll(sublist)
+
 It removes all items of sublist in the array list 
 
 #### .removeIf(predicator)
@@ -92,10 +106,12 @@ Type:Function(item,index)
 It iterates all the elements in the array list and then do by iterator
 
 #### .shuffle()
+
 It shuflles the elements in the array list
 
 #### .subList(formIndex, toEndIndex)
 Type:Number
+
 Type:Number
 
 It returns new child array
@@ -104,6 +120,7 @@ It returns new child array
 
 #### .contains(item)
 Type:Object
+
 It returns whether the arrray list contains the item judge by the uniqueKey
 
 #### .isEmpty()
@@ -114,10 +131,12 @@ It removes all the items in the array list.
 
 #### .get(index)
 Type:Number index
+
 It gets the element at index in the array list
 
 #### .set(index,newItem)
 Type:Number index
+
 Type:Object newItem
 
 It sets the newItem at index in the array list
