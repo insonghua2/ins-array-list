@@ -340,10 +340,10 @@ describe('ins-array-list API test', () => {
 
   describe('sort(predicator)', () => {
     it('sort the items in the array list by predicator ', () => {
-      mList.sort((a, b) => a.gender < b.gender)
+      mList.sort((a, b) => a.gender - b.gender)
 
       while(mList.get(0)===testList[0]){
-        mList.sort((a, b) => a.gender < b.gender)
+        mList.sort((a, b) => a.gender - b.gender)
       }
       expect(mList.size()).to.be.equal(3)
       testList.forEach((testItem, i) => {
