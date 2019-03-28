@@ -1,3 +1,8 @@
+![npm](https://img.shields.io/npm/v/ins-array-list.svg?style=flat-square)
+![Travis (.org)](https://img.shields.io/travis/insonghua2/ins-array-list.svg?style=flat-square)
+![Coveralls github](https://img.shields.io/coveralls/github/insonghua2/ins-array-list.svg?style=flat-square)
+![npm](https://img.shields.io/npm/dt/ins-array-list.svg?style=flat-square)
+
 >   simple array list implementation in javascript like java 
 
 
