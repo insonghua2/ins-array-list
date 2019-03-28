@@ -321,8 +321,9 @@ describe('ins-array-list API test', () => {
       testList = testList.concat(items)
       mList.addAll(items)
       mList.shuffle()
-      mList.shuffle()
-
+      while(mList.get(0)===testList[0]){
+       mList.shuffle()
+      }
       expect(mList.size()).to.be.equal(5)
       expect(testList.length).to.be.equal(5)
       testList.forEach((testItem, i) => {
@@ -339,7 +340,11 @@ describe('ins-array-list API test', () => {
 
   describe('sort(predicator)', () => {
     it('sort the items in the array list by predicator ', () => {
-      mList.sort((a, b) => a.id < b.id)
+      mList.sort((a, b) => a.gender < b.gender)
+
+      while(mList.get(0)===testList[0]){
+        mList.sort((a, b) => a.gender < b.gender)
+      }
       expect(mList.size()).to.be.equal(3)
       testList.forEach((testItem, i) => {
         expect(mList.source).to.deep.include.members([testItem])
