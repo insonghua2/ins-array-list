@@ -3,11 +3,11 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/insonghua2/ins-array-list.svg?style=flat-square)](https://coveralls.io/github/insonghua2/ins-array-list)
 [![npm](https://img.shields.io/npm/dt/ins-array-list.svg?style=flat-square)](https://www.npmjs.com/package/ins-array-list)
 
->   simple array list implementation in javascript like java 
+>   Simple array list implementation in Javascript like in Java 
 
 
 
-## InStall
+## Install
 
 ```bash
   $ npm install ins-array-list --save
