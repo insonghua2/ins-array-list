@@ -3,7 +3,14 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/insonghua2/ins-array-list.svg?style=flat-square)](https://coveralls.io/github/insonghua2/ins-array-list)
 [![npm](https://img.shields.io/npm/dt/ins-array-list.svg?style=flat-square)](https://www.npmjs.com/package/ins-array-list)
 
->   Simple array list implementation in Javascript like in Java 
+>   Simple array list implementation in Javascript like in Java ,Only 8kb size.
+>
+> *When called API,as below scene*:
+> 1. `index` is out of bound 
+> 2. `item` has not unique key
+> 3. add an reduplicated or remove unExisted item
+>
+> it will fail and throw corresponding error which helps developers to catch and konw what happens
 
 
 
@@ -34,9 +41,12 @@ const mData=[
     gender:1
   },
 ]
-//ArrayList(listData,unqiueKey) default unqiueKey=id
+//ArrayList(listData,unqiueKey) unqiueKey default "id"
+// const mList=new ArrayList(mData)
 const mList=new ArrayList(mData,'id')
-//get list data
+//do something by api below ...
+
+//get list data after each api operation if wanted
 console.log(mList.source)
 // ...more  API as below
 
@@ -179,10 +189,11 @@ It removes the items that meets predicator.
 #### .sort(predicator)
 `Type:Function(a,b)`
 
-It sorts the items that meet the predicator.
+It sorts the items that meet the predicator.it used like normal
+arr.sort((index,i)=>{...}) but inner implementation is sorted by shell method,which make it sort highly efficient
 
 ```js
-  //sortBy gender
+  //sortBy gender:item with gender of 1 is before one with gender of 2
   mList.sort((a,b)=>{
     return a.gender-b.gender
   })
@@ -194,9 +205,9 @@ It sorts the items that meet the predicator.
 It iterates all the elements in the array list and then do by iterator
 ```js
   //sort by gender
-  mList.iterate((item,index)=>{
+  mList.iterate((item,index,arr)=>{
     //do something
-    console.log(`item $=${index}:`+item)
+    console.log(`item ${index}:`+item)
   })
 ```
 
@@ -245,6 +256,14 @@ It removes all the items in the array list.
   mList.isEmpty()//=>false
   mList.clear()
   mList.isEmpty()//=>true
+```
+
+#### .indexOf(item)
+`Type:Object item`
+
+It returns the index of item in the array list
+```js
+  mList.indexOf({id:2,name:'Anna',gender:2})//=>1
 ```
 
 #### .get(index)

@@ -1,6 +1,6 @@
 {
   "name": "ins-array-list",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "array list normal operation by object-orientaion",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,19 @@
   },
   "keywords": [
     "array",
-    "list"
+    "list",
+    "sort",
+    "shuffle",
+    "iterate",
+    "contains",
+    "add",
+    "addAll",
+    "remove",
+    "removeAll",
+    "removeIf",
+    "clear",
+    "isEmpty",
+    "indexOf"
   ],
   "standard": {
     "globals": [

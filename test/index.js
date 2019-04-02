@@ -25,7 +25,7 @@ describe('ins-array-list API test', () => {
     mList = new ArrayList(testList, 'id')
     done()
   })
-  describe('constructor default value', () => {
+  describe('constructor', () => {
     it('should be ok if no value was setted', () => {
       const fn = function () {
         let mList = new ArrayList()
@@ -35,7 +35,32 @@ describe('ins-array-list API test', () => {
       expect(mList.source).to.deep.equal([])
       expect(mList.uniqueKey).to.equal('id')
     })
+    it('should throw error if one or more list item has not unqiuey key', () => {
+      const fn1 = function () {
+        let mList = new ArrayList([1, 2, 3])
+      }
+      const fn2 = function () {
+        let mList = new ArrayList([{ name: 'Anna' }])
+      }
+      const fn3 = function () {
+        let mList = new ArrayList([{ id: 2, name: 'Anna' }], 'fooKey')
+      }
+      const fn4 = function () {
+        let mList = new ArrayList([{ fooKey: 1, id: 1, name: 'Bar' }, { id: 2, name: 'Anna' }], 'fooKey')
+      }
+      // expect(fn1).to.throw(Error)
+      expect(fn2).to.throw(Error)
+      expect(fn3).to.throw(Error)
+      expect(fn4).to.throw(Error)
+    })
+    it('should be ok if array list items are given with unqiue key', () => {
+      const fn = function () {
+        let mList = new ArrayList([{ id: 2, namge: 'Anna' }], 'id')
+      }
+      expect(fn).to.not.throw(Error)
+    })
   })
+
   describe('public property .source', () => {
     it('should return the origin source of the array list', () => {
       expect(mList.source).to.deep.equal(testList)
@@ -46,6 +71,19 @@ describe('ins-array-list API test', () => {
       expect(mList.size()).to.be.equal(3)
     })
   })
+  describe('isReduplicated(obj)', () => {
+    it('should throw error if obj has not the unique key of the array list', () => {
+      const fn = function () {
+        mList.isReduplicated({ name: 'Anna', gender: 2 })
+      }
+      expect(fn).to.throw(Error)
+    })
+    it('should throw the result whether obj is existed in the array list', () => {
+      expect(mList.isReduplicated({ id: 2, name: 'Anna', gender: 2 })).to.be.true
+      expect(mList.isReduplicated({ id: 8, name: 'Bar', gender: 1 })).to.be.false
+    })
+  })
+
   describe('contains(item)', () => {
     it('should return false when the array list is empty', () => {
       const unItem = { id: 1, name: 'Alicy', gender: 1 }
@@ -59,6 +97,22 @@ describe('ins-array-list API test', () => {
     it('should return when the array list contains item', () => {
       const item = { id: 2, name: 'Anna', gender: 2 }
       expect(mList.contains(item)).to.be.true
+    })
+  })
+  describe('indexOf(item)', () => {
+    it('should  throw error if item has not uniqueKey as the array list', () => {
+      const fn = function () {
+        mList.indexOf({ name: 'Anna', gender: 2 })
+      }
+      expect(fn).to.throw(Error)
+    })
+    it('should return -1 if item was not found as the array list', () => {
+      const index = mList.indexOf({ id: 8, name: 'Foo', gender: 2 })
+      expect(index).to.equal(-1)
+    })
+    it('should return correct indexif item was  found as the array list', () => {
+      const index = mList.indexOf({ id: 2, name: 'Anna', gender: 2 })
+      expect(index).to.equal(1)
     })
   })
   describe('clear()', () => {
@@ -108,6 +162,12 @@ describe('ins-array-list API test', () => {
   })
 
   describe('add(item)', () => {
+    it('should throw error if item has not unique key', () => {
+      const fn = function () {
+        mList.add('foo')
+      }
+      expect(fn).to.throw(Error)
+    })
     it('should return false if add dupulicated item', () => {
       expect(mList.add({ id: 3, name: 'Steve', gender: 1 })).to.be.false
     })
@@ -305,8 +365,9 @@ describe('ins-array-list API test', () => {
       expect(fn).to.throw(Error)
     })
     it('should iterate the items in the array list and then call callback method iterator  ', () => {
-      mList.iterate((item, i) => {
+      mList.iterate((item, i, arr) => {
         expect(item).to.be.deep.equal(testList[i])
+        expect(item).to.be.deep.equal(arr[i])
       })
     })
   })
@@ -381,10 +442,6 @@ describe('ins-array-list API test', () => {
 
     it('sort the items in the array list by predicator ', () => {
       mList.sort((a, b) => a.gender - b.gender)
-
-      while (mList.get(0) === testList[0]) {
-        mList.sort((a, b) => a.gender - b.gender)
-      }
       expect(mList.size()).to.be.equal(3)
       testList.forEach((testItem, i) => {
         expect(mList.source).to.deep.include.members([testItem])

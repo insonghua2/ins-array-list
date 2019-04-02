@@ -12,6 +12,7 @@ function addMethod (obj, fnName, fn) {
 
 // private methods
 const _outOfBound = Symbol('_outOfBound')
+const hasOwn = {}.hasOwnProperty
 
 class ArrayList {
   /**
@@ -20,35 +21,48 @@ class ArrayList {
    * @param {string} uniqueKey
    * @memberof ArrayList
    */
-  constructor (listData, uniqueKey) {
-    this.listData = listData ? [...listData] : []
-    this.uniqueKey = uniqueKey || 'id'
+  constructor (listData = [], uniqueKey = 'id') {
+    if (listData && !Array.isArray(listData)) {
+      throw new TypeError('Expect Array,got' + typeof listData)
+    }
+
+    this.uniqueKey = uniqueKey
+    let len = listData.length
+    let hasError = false
+    while (len > 0 && !hasError) {
+      if (!hasOwn.call(listData[len - 1], this.uniqueKey)) {
+        hasError = true
+        throw new Error('one or more list item has not unqiuey key as' + this.uniqueKey)
+      }
+      len--
+    }
+    // this.listData = listData ? [...listData] : []
+    this.listData = listData.slice()
 
     addMethod(this, 'add', function (item) {
-      if (this.isDeplicated(item)) {
+      if (this.isReduplicated(item)) {
         return false
       }
       this.listData.push(item)
       return true
     })
     addMethod(this, 'add', function (index, item) {
-      if (this.isDeplicated(item)) {
+      if (this.isReduplicated(item)) {
         return false
       }
       if (this[_outOfBound](index)) {
-        // return false;
         throw new Error(`index is out of bound`)
       }
       this.listData.splice(index, 0, item)
       return true
     })
     addMethod(this, 'addAll', function (items) {
-      const isDeplicated = items.find((item) => {
-        if (this.isDeplicated(item)) {
+      const isReduplicated = items.find(item => {
+        if (this.isReduplicated(item)) {
           return true
         }
       })
-      if (isDeplicated) {
+      if (isReduplicated) {
         throw new Error('should not contains deplicated item')
       }
 
@@ -56,12 +70,12 @@ class ArrayList {
       return true
     })
     addMethod(this, 'addAll', function (index, items) {
-      const isDeplicated = items.find((item) => {
-        if (this.isDeplicated(item)) {
+      const isReduplicated = items.find(item => {
+        if (this.isReduplicated(item)) {
           return true
         }
       })
-      if (isDeplicated) {
+      if (isReduplicated) {
         throw new Error('should not contains deplicated item')
       }
       if (this[_outOfBound](index)) {
@@ -75,17 +89,20 @@ class ArrayList {
   /**
    *
    * private methods inner class
-   * @param {*} index
-   * @returns
+   * @param {number} index
+   * @returns {Boolean}
    * @memberof ArrayList
    */
   [_outOfBound] (index) {
     return index < 0 || index > this.size() - 1
   }
 
-  isDeplicated (obj) {
+  isReduplicated (obj) {
     const key = this.uniqueKey
-    const found = this.listData.find((item) => item[key] === obj[key])
+    if (!hasOwn.call(obj, key)) {
+      throw new Error('Expected object has property of' + key)
+    }
+    const found = this.listData.find(item => item[key] === obj[key])
     return !!found
   }
 
@@ -107,7 +124,7 @@ class ArrayList {
    */
   remove (arg) {
     const type = typeof arg
-    if (type === 'object' && !this.isDeplicated(arg)) {
+    if (type === 'object' && !this.isReduplicated(arg)) {
       return false
     }
     const index = type === 'number' ? arg : this.indexOf(arg)
@@ -129,8 +146,8 @@ class ArrayList {
     if (!list.length) {
       return false
     }
-    const isUnExist = list.find((item) => {
-      if (!this.isDeplicated(item)) {
+    const isUnExist = list.find(item => {
+      if (!this.isReduplicated(item)) {
         return true
       }
     })
@@ -153,13 +170,13 @@ class ArrayList {
    * @memberof ArrayList
    */
   removeIf (predicator) {
-    if (typeof predicator === 'function') {
-      this.listData = this.listData.filter((item, i) => {
-        return !predicator(item, i)
-      })
-    } else {
-      throw new Error('predicator must be a function')
+    if (typeof predicator !== 'function') {
+      throw new TypeError('Expected Function, got ' + typeof predicator)
     }
+
+    this.listData = this.listData.filter((item, i) => {
+      return !predicator(item, i)
+    })
   }
 
   /**
@@ -191,10 +208,10 @@ class ArrayList {
    */
   iterate (iterator) {
     if (typeof iterator !== 'function') {
-      throw new Error('predicator must be a function')
+      throw new TypeError('Expected Function, got ' + typeof iterator)
     }
     for (let i = 0; i < this.size(); i++) {
-      iterator(this.get(i), i)
+      iterator(this.get(i), i, this.source)
     }
   }
 
@@ -206,9 +223,25 @@ class ArrayList {
    */
   sort (predicator) {
     if (typeof predicator !== 'function') {
-      throw new Error('predicator must be a function')
+      throw new TypeError('Expected Function, got ' + typeof predicator)
     }
-    this.listData.sort(predicator)
+    // sortBy shell sort
+    let arr = this.listData
+    let len = arr.length
+    let item
+    let gap = 1
+    while (gap < len / 5) {
+      gap = gap * 5 + 1
+    }
+    for (gap; gap > 0; gap = Math.floor(gap / 5)) {
+      for (var i = gap; i < len; i++) {
+        item = arr[i]
+        for (var j = i - gap; j >= 0 && predicator(item, arr[j]) < 0; j -= gap) {
+          arr[j + gap] = arr[j]
+        }
+        arr[j + gap] = item
+      }
+    }
   }
 
   /**
@@ -217,7 +250,19 @@ class ArrayList {
    * @memberof ArrayList
    */
   shuffle () {
-    this.listData.sort((a, b) => Math.random() - 0.5)
+    let rand
+    let tmp
+    let arr = this.listData.slice()
+    let len = arr.length
+    let ret = arr.slice()
+
+    while (len) {
+      rand = Math.floor(Math.random() * len--)
+      tmp = ret[len]
+      ret[len] = ret[rand]
+      ret[rand] = tmp
+    }
+    this.listData = ret.slice()
   }
 
   /**
@@ -232,6 +277,9 @@ class ArrayList {
       return false
     }
     const key = this.uniqueKey
+    if (!hasOwn.call(item, key)) {
+      return new Error('Expected object has property of' + key)
+    }
     const isFound = this.listData.find(data => {
       return data[key] === item[key]
     })
@@ -247,6 +295,9 @@ class ArrayList {
    */
   indexOf (obj) {
     const key = this.uniqueKey
+    if (!hasOwn.call(obj, key)) {
+      throw new Error('Expected object has property of' + key)
+    }
     const index = this.listData.findIndex((item, i) => {
       return item[key] === obj[key]
     })
