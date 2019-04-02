@@ -25,6 +25,17 @@ describe('ins-array-list API test', () => {
     mList = new ArrayList(testList, 'id')
     done()
   })
+  describe('constructor default value', () => {
+    it('should be ok if no value was setted', () => {
+      const fn = function () {
+        let mList = new ArrayList()
+      }
+      expect(fn).to.not.throw(Error)
+      let mList = new ArrayList()
+      expect(mList.source).to.deep.equal([])
+      expect(mList.uniqueKey).to.equal('id')
+    })
+  })
   describe('public property .source', () => {
     it('should return the origin source of the array list', () => {
       expect(mList.source).to.deep.equal(testList)
@@ -36,6 +47,11 @@ describe('ins-array-list API test', () => {
     })
   })
   describe('contains(item)', () => {
+    it('should return false when the array list is empty', () => {
+      const unItem = { id: 1, name: 'Alicy', gender: 1 }
+      mList.clear()
+      expect(mList.contains(unItem)).to.be.false
+    })
     it('should return false when the array list does not contain item', () => {
       const unItem = { id: 4, name: 'Steve', gender: 1 }
       expect(mList.contains(unItem)).to.be.false
@@ -191,7 +207,7 @@ describe('ins-array-list API test', () => {
     })
     it('should thorw error of outOfBound', () => {
       var fn = function () {
-        mList.add(5, items)
+        mList.addAll(6, items)
       }
       expect(fn).to.throw(Error)
       expect(mList.size()).to.be.equal(3)
@@ -262,15 +278,32 @@ describe('ins-array-list API test', () => {
       expect(mList.removeAll(items)).to.be.true
       expect(mList.size()).to.be.equal(1)
     })
+    it('works when given empty item', () => {
+      let items = []
+      expect(mList.removeAll(items)).to.be.false
+      expect(mList.size()).to.be.equal(3)
+    })
   })
 
   describe('removeIf(predicator)', () => {
+    it('should throw error if predicator is not a function ', () => {
+      const fn = function () {
+        mList.removeIf('foo')
+      }
+      expect(fn).to.throw(Error)
+    })
     it('should remove the items in the array list by predicator ', () => {
       mList.removeIf((item, i) => item.gender === 1)
       expect(mList.size()).to.be.equal(2)
     })
   })
   describe('iterate(iterator)', () => {
+    it('should throw error if iterator is not a function ', () => {
+      const fn = function () {
+        mList.iterate('foo')
+      }
+      expect(fn).to.throw(Error)
+    })
     it('should iterate the items in the array list and then call callback method iterator  ', () => {
       mList.iterate((item, i) => {
         expect(item).to.be.deep.equal(testList[i])
@@ -321,8 +354,8 @@ describe('ins-array-list API test', () => {
       testList = testList.concat(items)
       mList.addAll(items)
       mList.shuffle()
-      while(mList.get(0)===testList[0]){
-       mList.shuffle()
+      while (mList.get(0) === testList[0]) {
+        mList.shuffle()
       }
       expect(mList.size()).to.be.equal(5)
       expect(testList.length).to.be.equal(5)
@@ -339,10 +372,17 @@ describe('ins-array-list API test', () => {
   })
 
   describe('sort(predicator)', () => {
+    it('should throw error if predicator is not a function ', () => {
+      const fn = function () {
+        mList.sort('foo')
+      }
+      expect(fn).to.throw(Error)
+    })
+
     it('sort the items in the array list by predicator ', () => {
       mList.sort((a, b) => a.gender - b.gender)
 
-      while(mList.get(0)===testList[0]){
+      while (mList.get(0) === testList[0]) {
         mList.sort((a, b) => a.gender - b.gender)
       }
       expect(mList.size()).to.be.equal(3)

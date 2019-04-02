@@ -21,7 +21,7 @@ class ArrayList {
    * @memberof ArrayList
    */
   constructor (listData, uniqueKey) {
-    this.listData = [...listData] || []
+    this.listData = listData ? [...listData] : []
     this.uniqueKey = uniqueKey || 'id'
 
     addMethod(this, 'add', function (item) {
@@ -65,7 +65,7 @@ class ArrayList {
         throw new Error('should not contains deplicated item')
       }
       if (this[_outOfBound](index)) {
-        return false
+        throw new Error('index is out of bound')
       }
       Array.prototype.splice.apply(this.listData, [index, 0, ...items])
       return true
@@ -205,9 +205,10 @@ class ArrayList {
    * @memberof ArrayList
    */
   sort (predicator) {
-    if (typeof predicator === 'function') {
-      this.listData.sort(predicator)
+    if (typeof predicator !== 'function') {
+      throw new Error('predicator must be a function')
     }
+    this.listData.sort(predicator)
   }
 
   /**
